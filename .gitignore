@@ -1,7 +1,57 @@
-# VS Code
-.vscode/
-*.code-workspace
+# Environment variables & secrets
+.env
+.env.*
+*.env
 
-# Ignore OS-generated files
+# Unwanted / Temporary directories
+recipe_app_ai/
+recipe_app/android - Copy/
+*.keras
+*.h5
+*.ipynb_checkpoints
+
+# VS Code & IDEs
+.vscode/
+.idea/
+*.code-workspace
+*.iml
+
+# Flutter build & tool artifacts
+recipe_app/build/
+recipe_app/.dart_tool/
+recipe_app/.flutter-plugins
+recipe_app/.flutter-plugins-dependencies
+recipe_app/.pub/
+recipe_app/.pub-cache/
+
+# Python & Django artifacts
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Media, Assets & Large Binary files
+media/
+uploads/
+recipe-app-api/media/
+recipe-app-api/static/
+recipe_app/assets/raw/
+recipe_app/assets/temp/
+assets/uploads/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wav
+*.mp3
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.psd
+*.ai
+*.raw
+
+# OS-generated files
 .DS_Store
 Thumbs.db
