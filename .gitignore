@@ -1,0 +1,7 @@
+# VS Code
+.vscode/
+*.code-workspace
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db

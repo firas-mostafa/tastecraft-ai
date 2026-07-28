@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superuser Login - TasteCraft AI Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Background glows */
+        .glowing-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1;
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 10%;
+            left: 20%;
+        }
+
+        .blob-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--secondary);
+            bottom: 10%;
+            right: 20%;
+        }
+
+        /* Back navigation */
+        .back-link {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 20;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+        }
+
+        /* Card container */
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 48px 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #d1d5db;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+        }
+
+        /* Error Banner */
+        .error-banner {
+            padding: 12px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Buttons */
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px -3px var(--primary-glow);
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px -4px var(--primary-glow);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'onboarding' %}" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back
+    </a>
+
+    <!-- Decorative Glows -->
+    <div class="glowing-blob blob-1"></div>
+    <div class="glowing-blob blob-2"></div>
+
+    <div class="login-card">
+        <div class="card-header">
+            <h2 class="card-title">Portal Sign In</h2>
+            <p class="card-subtitle">Please authenticate to access dashboard.</p>
+        </div>
+
+        {% if error %}
+            <div class="error-banner">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="admin@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="login-btn">Sign In</button>
+        </form>
+    </div>
+</body>
+</html>

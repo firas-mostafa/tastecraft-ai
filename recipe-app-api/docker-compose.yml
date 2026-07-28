@@ -1,0 +1,64 @@
+services:
+  app:
+    build: 
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    volumes:
+      - ./app:/app
+      - dev-static-data:/vol/web
+    command: >
+      sh -c "python manage.py wait_for_db &&
+            python manage.py wait_for_redis &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - REDIS_HOST=redis
+      - WHISPER_URL=http://whisper:9000/asr
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - whisper
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+  redis:
+    image: redis:7-alpine
+
+  whisper:
+    build:
+      context: .
+      dockerfile: Dockerfile.whisper
+    ports:
+      - "9000:9000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    volumes:
+      - whisper-cache:/root/.cache/whisper
+      - ./whisper_app:/app
+    environment:
+      - ASR_MODEL=base
+      - HF_ENDPOINT=https://huggingface.co
+    restart: unless-stopped
+
+volumes:
+  dev-db-data:
+  dev-static-data:
+  whisper-cache:

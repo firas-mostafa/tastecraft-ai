@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TasteCraft AI Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080b11;
+            --sidebar-bg: #0e131f;
+            --card-bg: #111827;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.15);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.15);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.15);
+            --danger: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Layout structure */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 70px;
+                position: static;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 24px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+        }
+
+        /* Logo Area */
+        .sidebar-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar-logo {
+                margin-bottom: 0;
+            }
+        }
+
+        /* Navigation Links */
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-list {
+                display: none;
+            }
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active svg {
+            color: var(--primary);
+        }
+
+        /* Header within Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            gap: 16px;
+        }
+
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+        }
+
+        .user-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+        }
+
+        .logout-pill-btn {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .logout-pill-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Grid components */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .stat-card-header svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        .card-blue .stat-card-header svg { color: var(--secondary); }
+        .card-green .stat-card-header svg { color: var(--success); }
+        .card-purple .stat-card-header svg { color: var(--primary); }
+        .card-orange .stat-card-header svg { color: var(--warning); }
+
+        .stat-card-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Progress Bar */
+        .progress-bar-bg {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(95deg, var(--primary), var(--secondary));
+            height: 100%;
+            border-radius: 9999px;
+        }
+
+        /* Charts Grid Layout */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1100px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Split Body Layout */
+        .dashboard-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        .panel-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        /* Custom Table Style */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .custom-table th {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .custom-table td {
+            font-size: 14px;
+            color: #d1d5db;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .email-cell {
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-muted {
+            background: rgba(156, 163, 175, 0.1);
+            color: var(--text-muted);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h2 class="sidebar-logo">TasteCraft AI</h2>
+        <ul class="nav-list">
+            <li>
+                <a href="#" class="nav-item active">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/admin/" class="nav-item" target="_blank">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Database Panels
+                </a>
+            </li>
+            <li>
+                <a href="/api/docs" class="nav-item" target="_blank">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    API Documents
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <header class="dashboard-header">
+            <h1 class="dashboard-title">System Metrics</h1>
+            <div class="header-actions">
+                <div class="user-pill">
+                    <span class="user-dot"></span>
+                    <span>{{ request.user.email }}</span>
+                </div>
+                <form method="POST" action="{% url 'portal_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-pill-btn">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Sign Out
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Total Users Card -->
+            <div class="stat-card card-blue">
+                <div class="stat-card-header">
+                    <span>Total Accounts</span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <div class="stat-card-value">{{ stats.total_users }}</div>
+                <div class="stat-card-subtitle">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                        <span>Onboarded: {{ stats.onboarded_users }}</span>
+                        <span>{{ stats.onboarding_rate }}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: {{ stats.onboarding_rate }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Profile Averages -->
+            <div class="stat-card card-green">
+                <div class="stat-card-header">
+                    <span>Health Specs</span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <div class="stat-card-value">BMI: {{ stats.avg_bmi }}</div>
+                <div class="stat-card-subtitle">
+                    <span>Average Age: {{ stats.avg_age }} years</span>
+                    <span>Average Stats: {{ stats.avg_weight }} kg | {{ stats.avg_height }} cm</span>
+                </div>
+            </div>
+
+            <!-- Recipe Overviews -->
+            <div class="stat-card card-purple">
+                <div class="stat-card-header">
+                    <span>Recipe Counts</span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <div class="stat-card-value">{{ stats.total_recipes }}</div>
+                <div class="stat-card-subtitle">
+                    <span>Liked: {{ stats.liked_recipes }} | Notes: {{ stats.recipes_with_notes }}</span>
+                    <span>Average Energy: {{ stats.avg_calories }} kcal</span>
+                </div>
+            </div>
+
+            <!-- Chat & Plans Activity -->
+            <div class="stat-card card-orange">
+                <div class="stat-card-header">
+                    <span>AI Engine Usage</span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </div>
+                <div class="stat-card-value">{{ stats.total_conversations }}</div>
+                <div class="stat-card-subtitle">
+                    <span>Total Messages: {{ stats.total_messages }}</span>
+                    <span>Weekly Meal Plans: {{ stats.total_meal_plans }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Charts Grid -->
+        <div class="charts-grid">
+            <!-- Disease Distribution Bar Chart -->
+            <div class="panel-card">
+                <h3 class="panel-title">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    Chronic Conditions Distribution
+                </h3>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="diseaseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Allergy Breakdown Doughnut Chart -->
+            <div class="panel-card">
+                <h3 class="panel-title">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                    Food Allergies Breakdown
+                </h3>
+                <div style="position: relative; height: 260px; width: 100%; display: flex; justify-content: center;">
+                    <canvas id="allergyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body split -->
+        <div class="dashboard-body">
+            <!-- Left Panel: Recent registrations -->
+            <div class="panel-card">
+                <h3 class="panel-title">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Recent Registrations
+                </h3>
+                <div style="overflow-x: auto; width: 100%;">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in recent_users %}
+                                <tr>
+                                    <td class="email-cell">{{ user.email }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>
+                                        {% if user.is_superuser %}
+                                            <span class="badge badge-warning">Superuser</span>
+                                        {% elif user.is_staff %}
+                                            <span class="badge badge-success">Staff</span>
+                                        {% else %}
+                                            <span class="badge badge-muted">User</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.is_active %}
+                                            <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">No users found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Integration & Configurations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Config for Chart.js options
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#9ca3af',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            size: 11
+                        }
+                    }
+                }
+            }
+        };
+
+        // Disease Chart (Bar)
+        const ctxDisease = document.getElementById('diseaseChart').getContext('2d');
+        const dLabels = [{% for item in stats.diseases %}"{{ item.name }}",{% endfor %}];
+        const dData = [{% for item in stats.diseases %}{{ item.count }},{% endfor %}];
+        
+        new Chart(ctxDisease, {
+            type: 'bar',
+            data: {
+                labels: dLabels.length > 0 ? dLabels : ["No Conditions"],
+                datasets: [{
+                    label: 'Affected Users',
+                    data: dData.length > 0 ? dData : [0],
+                    backgroundColor: 'rgba(139, 92, 246, 0.35)',
+                    borderColor: '#8b5cf6',
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(139, 92, 246, 0.55)'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.04)'
+                        },
+                        ticks: {
+                            color: '#9ca3af',
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#9ca3af'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Allergy Chart (Doughnut)
+        const ctxAllergy = document.getElementById('allergyChart').getContext('2d');
+        const aLabels = [{% for item in stats.allergies %}"{{ item.name }}",{% endfor %}];
+        const aData = [{% for item in stats.allergies %}{{ item.count }},{% endfor %}];
+
+        new Chart(ctxAllergy, {
+            type: 'doughnut',
+            data: {
+                labels: aLabels.length > 0 ? aLabels : ["No Allergies"],
+                datasets: [{
+                    data: aData.length > 0 ? aData : [1],
+                    backgroundColor: [
+                        'rgba(6, 182, 212, 0.4)',
+                        'rgba(245, 158, 11, 0.4)',
+                        'rgba(236, 72, 153, 0.4)',
+                        'rgba(16, 185, 129, 0.4)',
+                        'rgba(139, 92, 246, 0.4)'
+                    ],
+                    borderColor: '#111827',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#9ca3af',
+                            font: {
+                                family: "'Outfit', sans-serif",
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

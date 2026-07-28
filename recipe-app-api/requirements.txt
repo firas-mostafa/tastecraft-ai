@@ -1,0 +1,12 @@
+Django>=4.2.0,<4.3
+djangorestframework>=3.14.0,<3.16
+psycopg2>=2.8.6,<2.9
+drf-spectacular>=0.27.0,<0.29
+pillow>=9.0.0,<10.0.0
+daphne>=4.0.0,<4.1.0
+channels>=4.0.0,<4.1.0
+channels-redis>=4.0.0
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-google-genai>=1.0.0
+requests>=2.31.0
